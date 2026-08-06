@@ -1,0 +1,35 @@
+"use client";
+
+import Link from "next/link";
+import { usePathname } from "next/navigation";
+
+const NAV = [
+  { href: "/", label: "Overview" },
+  { href: "/#what-we-collect", label: "What we collect" },
+  { href: "/#setup", label: "Setup" },
+];
+
+export default function Header() {
+  const pathname = usePathname();
+
+  return (
+    <header className="sticky top-0 z-40 flex h-14 shrink-0 items-center justify-between border-b border-border bg-panel/80 px-6 backdrop-blur">
+      <div className="flex items-center gap-6">
+        <span className="text-sm font-semibold text-muted">
+          {pathname.startsWith("/projects/") ? "Project" : "Documentation"}
+        </span>
+        <nav className="flex items-center gap-4 text-sm">
+          {NAV.map((item) => (
+            <Link key={item.href} href={item.href} className="text-muted transition-colors hover:text-text">
+              {item.label}
+            </Link>
+          ))}
+        </nav>
+      </div>
+      <div className="flex items-center gap-2 text-xs text-muted">
+        <span className="h-1.5 w-1.5 rounded-full bg-good live-dot" />
+        self-hosted
+      </div>
+    </header>
+  );
+}

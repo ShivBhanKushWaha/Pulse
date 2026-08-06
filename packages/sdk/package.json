@@ -1,0 +1,22 @@
+{
+  "name": "@shiv-kush/pulse-monitor-sdk",
+  "version": "0.1.2",
+  "description": "Core SDK: config, buffering, local storage writer, export route. Framework/DB integrations live in separate @shiv-kush/pulse-monitor-plugin-* packages.",
+  "main": "dist/index.js",
+  "types": "dist/index.d.ts",
+  "files": [
+    "dist"
+  ],
+  "publishConfig": {
+    "access": "public"
+  },
+  "scripts": {
+    "build": "tsc -p tsconfig.json",
+    "prepublishOnly": "pnpm run build"
+  },
+  "dependencies": {},
+  "devDependencies": {
+    "@types/node": "^22.10.0",
+    "typescript": "^5.5.0"
+  }
+}
