@@ -195,7 +195,7 @@ export default function ProjectDashboard({ id }: { id: string }) {
         ) : filteredRows.length === 0 ? (
           <p className="px-4 py-6 text-sm text-muted">No requests match the current filters.</p>
         ) : (
-          <div className="max-h-[420px] overflow-y-auto">
+          <div className="max-h-105 overflow-y-auto">
             <table className="w-full text-sm">
               <thead className="sticky top-0 bg-panel text-left text-xs text-muted">
                 <tr>
