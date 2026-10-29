@@ -70,3 +70,7 @@ curl -X POST http://localhost:4500/api/projects   -H "authorization: Bearer $PUL
 ```
 
 Save the returned `apiKey` — it will not be shown again.
+
+## License
+
+[MIT](LICENSE)

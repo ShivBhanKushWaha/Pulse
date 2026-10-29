@@ -2,6 +2,7 @@
   "name": "@shiv-kush/pulse-monitor-sdk",
   "version": "0.2.1",
   "description": "Core SDK: config, buffering, local storage writer, export route. Framework/DB integrations live in separate @shiv-kush/pulse-monitor-plugin-* packages.",
+  "license": "MIT",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
   "files": [

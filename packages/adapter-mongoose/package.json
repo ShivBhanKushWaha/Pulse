@@ -2,6 +2,7 @@
   "name": "@shiv-kush/pulse-monitor-adapter-mongoose",
   "version": "0.1.1",
   "description": "MongoDB / Mongoose StorageAdapter for @shiv-kush/pulse-monitor-sdk: stores Pulse records in your own database, in one collection.",
+  "license": "MIT",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
   "files": [
