@@ -1,6 +1,6 @@
 {
   "name": "@shiv-kush/pulse-dashboard",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "description": "Pulse dashboard: one command to run the dashboard (UI + API) on your laptop or server. Polls the /_pulse/export route of every project that uses @shiv-kush/pulse-monitor-sdk.",
   "main": "dist/index.js",
   "scripts": {
@@ -42,5 +42,14 @@
     "pulse",
     "self-hosted",
     "observability"
-  ]
+  ],
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/ShivBhanKushWaha/pulse.git",
+    "directory": "packages/dashboard"
+  },
+  "homepage": "https://github.com/ShivBhanKushWaha/pulse/tree/main/packages/dashboard#readme",
+  "bugs": {
+    "url": "https://github.com/ShivBhanKushWaha/pulse/issues"
+  }
 }

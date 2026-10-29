@@ -1,6 +1,6 @@
 {
   "name": "@shiv-kush/pulse-monitor-sdk",
-  "version": "0.2.0",
+  "version": "0.2.1",
   "description": "Core SDK: config, buffering, local storage writer, export route. Framework/DB integrations live in separate @shiv-kush/pulse-monitor-plugin-* packages.",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
@@ -18,5 +18,14 @@
   "devDependencies": {
     "@types/node": "^22.10.0",
     "typescript": "^5.5.0"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/ShivBhanKushWaha/pulse.git",
+    "directory": "packages/sdk"
+  },
+  "homepage": "https://github.com/ShivBhanKushWaha/pulse/tree/main/packages/sdk#readme",
+  "bugs": {
+    "url": "https://github.com/ShivBhanKushWaha/pulse/issues"
   }
 }

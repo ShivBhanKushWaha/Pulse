@@ -1,6 +1,6 @@
 {
   "name": "@shiv-kush/pulse-monitor-plugin-express",
-  "version": "0.2.0",
+  "version": "0.2.1",
   "description": "Express integration for @shiv-kush/pulse-monitor-sdk: request timing middleware + /_pulse/export route.",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
@@ -24,5 +24,14 @@
     "@types/node": "^22.10.0",
     "express": "^4.19.2",
     "typescript": "^5.5.0"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/ShivBhanKushWaha/pulse.git",
+    "directory": "packages/plugin-express"
+  },
+  "homepage": "https://github.com/ShivBhanKushWaha/pulse/tree/main/packages/plugin-express#readme",
+  "bugs": {
+    "url": "https://github.com/ShivBhanKushWaha/pulse/issues"
   }
 }
