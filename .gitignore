@@ -1,6 +1,8 @@
 node_modules/
 dist/
 .next/
+out/
+packages/dashboard/ui/
 *.sqlite
 *.sqlite-journal
 *.sqlite-wal

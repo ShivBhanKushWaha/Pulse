@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from "react";
 import Link from "next/link";
-import { usePathname } from "next/navigation";
+import { usePathname, useSearchParams } from "next/navigation";
 import { fetchProjects, type Project } from "../lib/api";
 import NewProjectModal from "./NewProjectModal";
 
@@ -10,6 +10,7 @@ const POLL_MS = 8000;
 
 export default function Sidebar() {
   const pathname = usePathname();
+  const activeId = useSearchParams().get("id");
   const [projects, setProjects] = useState<Project[] | null>(null);
   const [error, setError] = useState(false);
   const [modalOpen, setModalOpen] = useState(false);
@@ -70,8 +71,8 @@ export default function Sidebar() {
             <p className="px-2 py-2 text-xs text-muted">No projects yet — register one.</p>
           )}
           {projects?.map((p) => {
-            const href = `/projects/${p.id}`;
-            const active = pathname === href;
+            const href = `/project/?id=${p.id}`;
+            const active = pathname.startsWith("/project") && activeId === p.id;
             return (
               <Link
                 key={p.id}

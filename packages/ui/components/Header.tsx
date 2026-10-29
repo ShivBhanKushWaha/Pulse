@@ -17,7 +17,7 @@ export default function Header() {
     <header className="sticky top-0 z-40 flex h-14 shrink-0 items-center justify-between border-b border-border bg-panel/80 px-6 backdrop-blur">
       <div className="flex items-center gap-6">
         <span className="text-sm font-semibold text-muted">
-          {pathname.startsWith("/projects/") ? "Project" : "Documentation"}
+          {pathname.startsWith("/project") ? "Project" : "Documentation"}
         </span>
         <nav className="flex items-center gap-4 text-sm">
           {NAV.map((item) => (

@@ -9,8 +9,8 @@ pulse/
     plugin-express/     @shiv-kush/pulse-monitor-plugin-express — Express middleware + mounts the export route
     plugin-fastify/     @shiv-kush/pulse-monitor-plugin-fastify — Fastify hook + mounts the export route
     adapter-mongoose/   @shiv-kush/pulse-monitor-adapter-mongoose — StorageAdapter for MongoDB / Mongoose
-    dashboard/          pulse-dashboard — the only service you host: registry, poller, cache DB, API
-    ui/                 pulse-ui — Next.js dashboard (sign in with the admin token)
+    dashboard/          @shiv-kush/pulse-dashboard — run the dashboard with one command (UI + API); registry, poller, cache DB
+    ui/                 pulse-ui — the Next.js UI (built as static files and shipped inside the dashboard package)
 ```
 
 ## How it fits together
@@ -43,16 +43,24 @@ Implemented:
 - `@shiv-kush/pulse-monitor-sdk` core (buffer with retry, process sampler, export handler, `initMonitoring`)
 - `@shiv-kush/pulse-monitor-plugin-express` and `@shiv-kush/pulse-monitor-plugin-fastify` (HTTP timing + export route; the export route itself is not recorded)
 - `@shiv-kush/pulse-monitor-adapter-mongoose` (any `mongoose.connection` or native `Db`)
-- `pulse-dashboard` (SQLite registry, poller, authenticated REST API, retention) and `pulse-ui`
+- `@shiv-kush/pulse-dashboard` (`npx` CLI serving the UI and an authenticated REST API; SQLite registry, poller, retention) and `pulse-ui` (static export)
 
 Not yet implemented: Postgres / Prisma adapters, error-handling plugin, alerting, per-user accounts (one admin token for now).
 
-## Running the dashboard locally
+## Quick start (no clone needed)
+
+```
+npx @shiv-kush/pulse-dashboard --open
+```
+
+See [`packages/dashboard`](packages/dashboard) and the complete walk-through (local, production, Docker) in [`examples/full-setup`](examples/full-setup).
+
+## Developing Pulse itself
 
 ```
 pnpm install
 cp packages/dashboard/.env.example packages/dashboard/.env   # set PULSE_ADMIN_TOKEN and PULSE_MASTER_KEY
-pnpm --filter pulse-dashboard dev
+pnpm --filter @shiv-kush/pulse-dashboard dev
 ```
 
 Then register a project (or use “+ New” in the UI after signing in with the token):

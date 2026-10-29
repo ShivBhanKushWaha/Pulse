@@ -11,7 +11,7 @@
     "lint:fix": "eslint . --fix",
     "format": "prettier --write .",
     "format:check": "prettier --check .",
-    "dev:dashboard": "pnpm --filter pulse-dashboard dev"
+    "dev:dashboard": "pnpm --filter @shiv-kush/pulse-dashboard dev"
   },
   "devDependencies": {
     "@eslint/js": "^9.9.0",

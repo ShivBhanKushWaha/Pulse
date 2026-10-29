@@ -1,4 +1,5 @@
-const API_URL = process.env.NEXT_PUBLIC_PULSE_API_URL ?? "http://localhost:4500";
+// Empty = same origin (the dashboard package serves this UI). For `next dev` set NEXT_PUBLIC_PULSE_API_URL in .env.local.
+const API_URL = process.env.NEXT_PUBLIC_PULSE_API_URL ?? "";
 
 const TOKEN_KEY = "pulse.adminToken";
 

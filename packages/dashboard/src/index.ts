@@ -1,6 +1,9 @@
 import "dotenv/config";
 import Fastify from "fastify";
 import cors from "@fastify/cors";
+import fastifyStatic from "@fastify/static";
+import fs from "node:fs";
+import path from "node:path";
 import { db } from "./db.js";
 import { isAuthorized, isBlocked, recordFailure } from "./auth.js";
 import { registerProject, listProjects, getProject } from "./registry.js";
@@ -9,19 +12,23 @@ import { startRetention } from "./retention.js";
 
 const MAX_METRICS_LIMIT = 5_000;
 
+// The built UI ships inside the package (see scripts/copy-ui.mjs); when running from source it may not exist.
+const UI_DIR = path.resolve(__dirname, "../ui");
+
 const clampInt = (value: string | undefined, fallback: number, min: number, max: number) => {
   const parsed = Number(value);
   return Number.isFinite(parsed) ? Math.min(Math.max(Math.floor(parsed), min), max) : fallback;
 };
 
 async function main() {
-  const app = Fastify({ logger: true });
+  const app = Fastify({ logger: { level: process.env.PULSE_LOG_LEVEL ?? "info" } });
 
   await app.register(cors, { origin: process.env.PULSE_UI_ORIGIN ?? "http://localhost:3000" });
 
-  // Everything under /api needs the admin token; only /health is open (for uptime checks).
+  // Everything under /api needs the admin token. /health and the UI files are open (the UI is only a login
+  // screen until a valid token is entered).
   app.addHook("onRequest", async (req, reply) => {
-    if (req.method === "OPTIONS" || req.url === "/health") return;
+    if (req.method === "OPTIONS" || !req.url.startsWith("/api")) return;
 
     if (isBlocked(req.ip)) {
       return reply.status(429).header("retry-after", "900").send({ error: "too many failed attempts" });
@@ -87,12 +94,16 @@ async function main() {
       .all(id, since, limit);
   });
 
+  if (fs.existsSync(path.join(UI_DIR, "index.html"))) {
+    await app.register(fastifyStatic, { root: UI_DIR, prefix: "/", redirect: true });
+  }
+
   const stopPoller = startPoller(Number(process.env.PULSE_POLL_INTERVAL_MS ?? 20_000));
   const stopRetention = startRetention(Number(process.env.PULSE_RETENTION_DAYS ?? 14));
 
   const port = Number(process.env.PORT ?? 4500);
   try {
-    await app.listen({ port, host: "0.0.0.0" });
+    await app.listen({ port, host: process.env.PULSE_HOST ?? "0.0.0.0" });
   } catch (err) {
     app.log.error(err);
     process.exit(1);

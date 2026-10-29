@@ -1,4 +1,4 @@
-import type { ReactNode } from "react";
+import { Suspense, type ReactNode } from "react";
 import AuthGate from "../components/AuthGate";
 import Sidebar from "../components/Sidebar";
 import Header from "../components/Header";
@@ -15,7 +15,9 @@ export default function RootLayout({ children }: { children: ReactNode }) {
     <html lang="en">
       <body className="flex h-screen overflow-hidden bg-bg text-text">
         <AuthGate>
-          <Sidebar />
+          <Suspense fallback={null}>
+            <Sidebar />
+          </Suspense>
           <div className="flex flex-1 flex-col overflow-hidden">
             <Header />
             <div className="flex-1 overflow-y-auto">
