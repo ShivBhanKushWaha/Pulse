@@ -21,6 +21,7 @@
   "devDependencies": {
     "@shiv-kush/pulse-monitor-sdk": "workspace:*",
     "@types/express": "^4.17.21",
+    "@types/node": "^22.10.0",
     "express": "^4.19.2",
     "typescript": "^5.5.0"
   }
