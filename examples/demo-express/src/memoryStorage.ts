@@ -14,10 +14,14 @@ export function createMemoryStorage(): StorageAdapter {
       // no schema to create for an in-memory store
     },
     async write(batch) {
-      records.push(...batch);
+      // A batch can arrive twice (retry after a failed write): ignore ids already stored.
+      for (const record of batch) {
+        if (!record.id || !records.some((r) => r.id === record.id)) records.push(record);
+      }
     },
     async readSince(sinceTs, limit) {
-      return records.filter((r) => r.ts > sinceTs).slice(0, limit);
+      // Inclusive (ts >= sinceTs): the dashboard drops records it already has by id.
+      return records.filter((r) => r.ts >= sinceTs).slice(0, limit);
     },
   };
 }

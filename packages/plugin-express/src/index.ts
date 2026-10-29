@@ -13,6 +13,13 @@ export function pulseExpress(
   const exportPath = options.exportPath ?? "/_pulse/export";
 
   app.use((req: Request, res: Response, next: NextFunction) => {
+    // The dashboard polls the export route; recording those requests would make every poll create the next
+    // record to export. Only real traffic is measured.
+    if (req.path === exportPath) {
+      next();
+      return;
+    }
+
     const start = process.hrtime.bigint();
     res.on("finish", () => {
       const durationMs = Number(process.hrtime.bigint() - start) / 1_000_000;

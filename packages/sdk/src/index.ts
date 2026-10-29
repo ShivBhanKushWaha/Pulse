@@ -17,6 +17,7 @@ export interface PulseInstance {
 const DEFAULT_FLUSH_INTERVAL_MS = 5_000;
 const DEFAULT_PROCESS_SAMPLE_INTERVAL_MS = 15_000;
 const DEFAULT_MAX_BUFFER_SIZE = 500;
+const INIT_RETRY_MS = 5_000;
 
 let activeInstance: PulseInstance | null = null;
 
@@ -29,6 +30,7 @@ export function initMonitoring(config: PulseConfig): PulseInstance {
     config.storage,
     config.flushIntervalMs ?? DEFAULT_FLUSH_INTERVAL_MS,
     config.maxBufferSize ?? DEFAULT_MAX_BUFFER_SIZE,
+    config.maxQueueSize,
   );
 
   const stopSampler = startProcessSampler(buffer, DEFAULT_PROCESS_SAMPLE_INTERVAL_MS);
@@ -36,16 +38,34 @@ export function initMonitoring(config: PulseConfig): PulseInstance {
   const instance: PulseInstance = {
     config,
     buffer,
-    record: (record) => buffer.push({ ts: record.ts ?? Date.now(), kind: record.kind, data: record.data }),
+    record: (record) => buffer.push({ id: record.id, ts: record.ts ?? Date.now(), kind: record.kind, data: record.data }),
     exportHandler: createExportHandler(config),
     shutdown: async () => {
+      stopped = true;
+      if (initTimer) clearTimeout(initTimer);
       stopSampler();
       buffer.stop();
-      await buffer.flush();
+      await buffer.flush(true);
     },
   };
 
-  void config.storage.init().then(() => buffer.start());
+  // init() hits the host's database; if it is down at startup keep retrying instead of leaving the buffer idle
+  // (and never let a rejection escape into the host app).
+  let initTimer: ReturnType<typeof setTimeout> | null = null;
+  let stopped = false;
+  const initStorage = () => {
+    config.storage.init().then(
+      () => {
+        if (!stopped) buffer.start();
+      },
+      () => {
+        if (stopped) return;
+        initTimer = setTimeout(initStorage, INIT_RETRY_MS);
+        initTimer.unref?.();
+      },
+    );
+  };
+  initStorage();
 
   activeInstance = instance;
   return instance;

@@ -1,6 +1,7 @@
 {
   "name": "pulse-dashboard",
   "version": "0.1.0",
+  "private": true,
   "description": "Registry + poller + API for the Pulse dashboard. Polls each registered project's /_pulse/export endpoint.",
   "main": "dist/index.js",
   "scripts": {

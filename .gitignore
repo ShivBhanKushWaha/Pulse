@@ -3,6 +3,8 @@ dist/
 .next/
 *.sqlite
 *.sqlite-journal
+*.sqlite-wal
+*.sqlite-shm
 .env
 .env.local
 *.log

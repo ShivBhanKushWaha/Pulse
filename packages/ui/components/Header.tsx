@@ -2,6 +2,7 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
+import { clearToken } from "../lib/api";
 
 const NAV = [
   { href: "/", label: "Overview" },
@@ -26,9 +27,21 @@ export default function Header() {
           ))}
         </nav>
       </div>
-      <div className="flex items-center gap-2 text-xs text-muted">
-        <span className="h-1.5 w-1.5 rounded-full bg-good live-dot" />
-        self-hosted
+      <div className="flex items-center gap-4 text-xs text-muted">
+        <span className="flex items-center gap-2">
+          <span className="h-1.5 w-1.5 rounded-full bg-good live-dot" />
+          self-hosted
+        </span>
+        <button
+          type="button"
+          onClick={() => {
+            clearToken();
+            window.location.reload();
+          }}
+          className="transition-colors hover:text-text"
+        >
+          Sign out
+        </button>
       </div>
     </header>
   );

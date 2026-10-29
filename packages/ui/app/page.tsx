@@ -1,4 +1,4 @@
-import { fetchProjects } from "../lib/api";
+import ProjectsSummary from "../components/ProjectsSummary";
 import CodeBlock from "../components/CodeBlock";
 
 const COLLECTED = [
@@ -36,9 +36,7 @@ const STATUS_LABEL: Record<string, string> = {
   planned: "not built yet",
 };
 
-export default async function HomePage() {
-  const projects = await fetchProjects().catch(() => null);
-
+export default function HomePage() {
   return (
     <div className="mx-auto max-w-3xl space-y-16">
       <section>
@@ -48,13 +46,7 @@ export default async function HomePage() {
           into <strong className="text-text">that project&apos;s own database</strong> — this dashboard only
           polls a small export endpoint you control, it never touches your data directly.
         </p>
-        <p className="mt-4 text-sm">
-          {projects === null
-            ? "⚠ Can't reach the dashboard API right now — is pulse-dashboard running?"
-            : projects.length === 0
-              ? "No projects registered yet — hit “+ New” in the sidebar to get started."
-              : `${projects.length} project${projects.length === 1 ? "" : "s"} registered. Pick one from the sidebar to see live metrics.`}
-        </p>
+        <ProjectsSummary />
       </section>
 
       <section id="what-we-collect" className="scroll-mt-20">
@@ -100,6 +92,7 @@ export default async function HomePage() {
             <CodeBlock
               label="shell"
               code={`curl -X POST http://localhost:4500/api/projects \\
+  -H "authorization: Bearer $PULSE_ADMIN_TOKEN" \\
   -H "content-type: application/json" \\
   -d '{"name":"my-service","exportUrl":"http://localhost:5000/_pulse/export","environment":"production"}'`}
             />

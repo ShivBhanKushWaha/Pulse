@@ -1,6 +1,6 @@
 {
   "name": "@shiv-kush/pulse-monitor-plugin-express",
-  "version": "0.1.2",
+  "version": "0.2.0",
   "description": "Express integration for @shiv-kush/pulse-monitor-sdk: request timing middleware + /_pulse/export route.",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",

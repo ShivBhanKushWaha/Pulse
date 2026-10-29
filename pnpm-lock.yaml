@@ -52,6 +52,18 @@ importers:
         specifier: ^5.5.0
         version: 5.9.3
 
+  packages/adapter-mongoose:
+    devDependencies:
+      '@shiv-kush/pulse-monitor-sdk':
+        specifier: workspace:*
+        version: link:../sdk
+      '@types/node':
+        specifier: ^22.10.0
+        version: 22.20.1
+      typescript:
+        specifier: ^5.5.0
+        version: 5.9.3
+
   packages/dashboard:
     dependencies:
       '@fastify/cors':
@@ -85,6 +97,21 @@ importers:
       express:
         specifier: ^4.19.2
         version: 4.22.2
+      typescript:
+        specifier: ^5.5.0
+        version: 5.9.3
+
+  packages/plugin-fastify:
+    devDependencies:
+      '@shiv-kush/pulse-monitor-sdk':
+        specifier: workspace:*
+        version: link:../sdk
+      '@types/node':
+        specifier: ^22.10.0
+        version: 22.20.1
+      fastify:
+        specifier: ^4.28.1
+        version: 4.29.1
       typescript:
         specifier: ^5.5.0
         version: 5.9.3

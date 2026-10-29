@@ -1,0 +1,25 @@
+{
+  "name": "@shiv-kush/pulse-monitor-adapter-mongoose",
+  "version": "0.1.0",
+  "description": "MongoDB / Mongoose StorageAdapter for @shiv-kush/pulse-monitor-sdk: stores Pulse records in your own database, in one collection.",
+  "main": "dist/index.js",
+  "types": "dist/index.d.ts",
+  "files": [
+    "dist"
+  ],
+  "publishConfig": {
+    "access": "public"
+  },
+  "scripts": {
+    "build": "tsc -p tsconfig.json",
+    "prepublishOnly": "pnpm run build"
+  },
+  "peerDependencies": {
+    "@shiv-kush/pulse-monitor-sdk": "workspace:*"
+  },
+  "devDependencies": {
+    "@shiv-kush/pulse-monitor-sdk": "workspace:*",
+    "@types/node": "^22.10.0",
+    "typescript": "^5.5.0"
+  }
+}

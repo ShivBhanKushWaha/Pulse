@@ -7,7 +7,10 @@ pulse/
   packages/
     sdk/               @shiv-kush/pulse-monitor-sdk — core: config, buffer, storage-adapter interface, /_pulse/export handler
     plugin-express/     @shiv-kush/pulse-monitor-plugin-express — Express middleware + mounts the export route
-    dashboard/           pulse-dashboard — the only service you host: registry, poller, cache DB, API
+    plugin-fastify/     @shiv-kush/pulse-monitor-plugin-fastify — Fastify hook + mounts the export route
+    adapter-mongoose/   @shiv-kush/pulse-monitor-adapter-mongoose — StorageAdapter for MongoDB / Mongoose
+    dashboard/          pulse-dashboard — the only service you host: registry, poller, cache DB, API
+    ui/                 pulse-ui — Next.js dashboard (sign in with the admin token)
 ```
 
 ## How it fits together
@@ -21,33 +24,41 @@ pulse/
 
 Nothing in the monitored project's DB credentials, connection string, or raw data ever reaches the dashboard — only the batched metric records it chooses to write via the adapter.
 
-## Status: Phase 1 skeleton
+## Security
+
+- **Dashboard API:** every `/api/*` call needs `Authorization: Bearer <PULSE_ADMIN_TOKEN>` (only `/health` is open). Compared in constant time; 20 failed attempts per client in 15 minutes returns 429. Production refuses to start without `PULSE_ADMIN_TOKEN` (24+ characters) and `PULSE_MASTER_KEY` (16+ characters). In development, if no token is set a temporary one is printed at startup. The UI shows a sign-in form and keeps the token in the browser's local storage.
+- **Export route:** `GET /_pulse/export` needs the project's `apiKey` as a Bearer token, compared in constant time.
+- Project API keys are encrypted at rest (AES-256-GCM, key from `PULSE_MASTER_KEY`).
+
+## Delivery guarantees
+
+- **SDK to your DB:** a failed write is retried with exponential backoff (queue bounded by `maxQueueSize`, oldest dropped first). Every record has a unique `id`, so a batch written twice is stored once.
+- **Your DB to the dashboard:** the export is inclusive (`ts >= since`), the dashboard stores records with `INSERT OR IGNORE` on `(project, record id)`, so the cursor can never skip records that share a millisecond. If a whole page sits in one millisecond the page size grows (500 → 10,000) before the cursor moves on. Rounds never overlap, and each request has a 10 s timeout.
+- **Retention:** the dashboard deletes cached metrics older than `PULSE_RETENTION_DAYS` (default 14) hourly. The Mongoose adapter expires records in your DB itself (TTL, `retentionDays`, default 7).
+
+## Status
 
 Implemented:
 
-- `@shiv-kush/pulse-monitor-sdk` core (buffer, process sampler, export handler, `initMonitoring`)
-- `@shiv-kush/pulse-monitor-plugin-express` (HTTP timing + export route)
-- `pulse-dashboard` (SQLite registry, poller, minimal REST API — no UI yet)
+- `@shiv-kush/pulse-monitor-sdk` core (buffer with retry, process sampler, export handler, `initMonitoring`)
+- `@shiv-kush/pulse-monitor-plugin-express` and `@shiv-kush/pulse-monitor-plugin-fastify` (HTTP timing + export route; the export route itself is not recorded)
+- `@shiv-kush/pulse-monitor-adapter-mongoose` (any `mongoose.connection` or native `Db`)
+- `pulse-dashboard` (SQLite registry, poller, authenticated REST API, retention) and `pulse-ui`
 
-Not yet implemented (see architecture report for full phase plan):
-
-- A `StorageAdapter` implementation for Mongoose (needed to wire into SkStore_Server, since that's Mongo-based)
-- `pulse-plugin-fastify`
-- Dashboard UI (Next.js), alerting, auth on the dashboard's own API
+Not yet implemented: Postgres / Prisma adapters, error-handling plugin, alerting, per-user accounts (one admin token for now).
 
 ## Running the dashboard locally
 
 ```
 pnpm install
+cp packages/dashboard/.env.example packages/dashboard/.env   # set PULSE_ADMIN_TOKEN and PULSE_MASTER_KEY
 pnpm --filter pulse-dashboard dev
 ```
 
-Then:
+Then register a project (or use “+ New” in the UI after signing in with the token):
 
 ```
-curl -X POST http://localhost:4500/api/projects \
-  -H "content-type: application/json" \
-  -d '{"name":"SkStore Server","exportUrl":"http://localhost:5000/_pulse/export","environment":"development"}'
+curl -X POST http://localhost:4500/api/projects   -H "authorization: Bearer $PULSE_ADMIN_TOKEN"   -H "content-type: application/json"   -d '{"name":"SkStore Server","exportUrl":"http://localhost:5000/_pulse/export","environment":"development"}'
 ```
 
 Save the returned `apiKey` — it will not be shown again.
