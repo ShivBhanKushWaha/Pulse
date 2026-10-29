@@ -1,6 +1,6 @@
 {
   "name": "@shiv-kush/pulse-dashboard",
-  "version": "0.1.1",
+  "version": "0.1.2",
   "description": "Pulse dashboard: one command to run the dashboard (UI + API) on your laptop or server. Polls the /_pulse/export route of every project that uses @shiv-kush/pulse-monitor-sdk.",
   "license": "MIT",
   "main": "dist/index.js",
