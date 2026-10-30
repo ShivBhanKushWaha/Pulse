@@ -1,5 +1,6 @@
 import crypto from "node:crypto";
 import { db, decryptApiKey } from "./db.js";
+import { checkExportUrl } from "./urlGuard.js";
 
 interface ProjectRow {
   id: string;
@@ -56,6 +57,13 @@ async function pollProject(project: ProjectRow): Promise<void> {
       .get(project.id) as unknown as { last_ts: number } | undefined;
     let sinceTs = cursor?.last_ts ?? 0;
     let limit = PAGE_LIMIT;
+
+    // Checked on every round, not only at registration: DNS can change after a project was added.
+    const urlProblem = await checkExportUrl(project.export_url);
+    if (urlProblem) {
+      console.error(`[poller] ${project.id} skipped: ${urlProblem}`);
+      return;
+    }
     const apiKey = decryptApiKey(project.api_key_encrypted);
 
     for (let page = 0; page < MAX_PAGES_PER_ROUND; page++) {
@@ -65,6 +73,7 @@ async function pollProject(project: ProjectRow): Promise<void> {
 
       const res = await fetch(url, {
         headers: { authorization: `Bearer ${apiKey}` },
+        redirect: "error", // a redirect would carry the key to a host nobody checked
         signal: AbortSignal.timeout(FETCH_TIMEOUT_MS),
       });
       if (!res.ok) {

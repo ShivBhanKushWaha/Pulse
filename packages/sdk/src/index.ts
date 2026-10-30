@@ -18,12 +18,18 @@ const DEFAULT_FLUSH_INTERVAL_MS = 5_000;
 const DEFAULT_PROCESS_SAMPLE_INTERVAL_MS = 15_000;
 const DEFAULT_MAX_BUFFER_SIZE = 500;
 const INIT_RETRY_MS = 5_000;
+const MIN_API_KEY_LENGTH = 32;
 
 let activeInstance: PulseInstance | null = null;
 
 export function initMonitoring(config: PulseConfig): PulseInstance {
   if (!config.apiKey || !config.projectId || !config.storage) {
     throw new Error("@shiv-kush/pulse-monitor-sdk: apiKey, projectId, and storage are required");
+  }
+  if (config.apiKey.length < MIN_API_KEY_LENGTH) {
+    throw new Error(
+      `@shiv-kush/pulse-monitor-sdk: apiKey must be at least ${MIN_API_KEY_LENGTH} characters. Use the key the dashboard gave you, or generate one with crypto.randomBytes(32).toString("hex").`,
+    );
   }
 
   const buffer = new MetricBuffer(

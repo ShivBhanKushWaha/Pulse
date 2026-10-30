@@ -1,6 +1,6 @@
 # @shiv-kush/pulse-monitor-plugin-fastify
 
-Fastify integration for [`@shiv-kush/pulse-monitor-sdk`](https://www.npmjs.com/package/@shiv-kush/pulse-monitor-sdk). Records method, route pattern, status code and duration of every request, and mounts the `/_pulse/export` route your Pulse dashboard polls. Works with Fastify 4 and 5.
+Fastify integration for [`@shiv-kush/pulse-monitor-sdk`](https://www.npmjs.com/package/@shiv-kush/pulse-monitor-sdk). Records method, route pattern, status code and duration of every request, and mounts the `/_pulse/export` route your Pulse dashboard polls. Requires Fastify 5.12.2 or newer (older versions have known security advisories).
 
 ## Install
 

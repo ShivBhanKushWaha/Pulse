@@ -7,6 +7,7 @@ import path from "node:path";
 import { db } from "./db.js";
 import { isAuthorized, isBlocked, recordFailure } from "./auth.js";
 import { registerProject, listProjects, getProject } from "./registry.js";
+import { checkExportUrl } from "./urlGuard.js";
 import { startPoller } from "./poller.js";
 import { startRetention } from "./retention.js";
 
@@ -48,15 +49,8 @@ async function main() {
       return reply.status(400).send({ error: "name, exportUrl, environment are required" });
     }
 
-    let parsedUrl: URL;
-    try {
-      parsedUrl = new URL(body.exportUrl);
-    } catch {
-      return reply.status(400).send({ error: "exportUrl must be a full, valid URL" });
-    }
-    if (parsedUrl.protocol !== "http:" && parsedUrl.protocol !== "https:") {
-      return reply.status(400).send({ error: "exportUrl must use http:// or https://" });
-    }
+    const urlProblem = await checkExportUrl(body.exportUrl);
+    if (urlProblem) return reply.status(400).send({ error: urlProblem });
 
     const project = registerProject({
       name: body.name,

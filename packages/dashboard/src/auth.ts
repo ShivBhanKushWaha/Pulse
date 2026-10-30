@@ -43,6 +43,12 @@ const WINDOW_MS = 15 * 60_000;
 const MAX_FAILURES = 20;
 const failures = new Map<string, { count: number; resetAt: number }>();
 
+/** Expired entries are dropped periodically, so the map does not grow with every client that ever failed. */
+setInterval(() => {
+  const now = Date.now();
+  for (const [id, entry] of failures) if (now > entry.resetAt) failures.delete(id);
+}, 60_000).unref();
+
 export function isBlocked(clientId: string): boolean {
   const entry = failures.get(clientId);
   if (!entry) return false;

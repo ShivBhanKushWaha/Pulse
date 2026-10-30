@@ -1,6 +1,8 @@
 import type { Application, NextFunction, Request, Response } from "express";
 import type { PulseInstance } from "@shiv-kush/pulse-monitor-sdk";
 
+const UNMATCHED_ROUTE = "unmatched";
+
 export interface PulseExpressOptions {
   exportPath?: string;
 }
@@ -27,7 +29,8 @@ export function pulseExpress(
         kind: "http_request",
         data: {
           method: req.method,
-          route: req.route?.path ?? req.path,
+          // Unmatched requests (404 scans, tokens in paths) share one label so they cannot fill the store.
+          route: req.route?.path ?? UNMATCHED_ROUTE,
           statusCode: res.statusCode,
           durationMs,
           userId: (req as unknown as { user?: { id?: string } }).user?.id ?? null,
@@ -42,6 +45,7 @@ export function pulseExpress(
     const limit = req.query.limit ? Number(req.query.limit) : undefined;
     const result = await instance.exportHandler({
       authorizationHeader: req.header("authorization"),
+      clientId: req.ip,
       sinceTs: Number.isFinite(sinceTs) ? sinceTs : 0,
       limit,
     });

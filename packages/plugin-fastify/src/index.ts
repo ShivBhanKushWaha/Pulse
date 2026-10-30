@@ -1,6 +1,8 @@
 import type { FastifyInstance, FastifyReply, FastifyRequest } from "fastify";
 import type { PulseInstance } from "@shiv-kush/pulse-monitor-sdk";
 
+const UNMATCHED_ROUTE = "unmatched";
+
 export interface PulseFastifyOptions {
   exportPath?: string;
 }
@@ -13,8 +15,10 @@ export function pulseFastify(app: FastifyInstance, instance: PulseInstance, opti
   const exportPath = options.exportPath ?? "/_pulse/export";
 
   app.addHook("onResponse", async (req: FastifyRequest, reply: FastifyReply) => {
-    const route = (req as unknown as { routeOptions?: { url?: string } }).routeOptions?.url ?? req.url.split("?")[0];
-    if (route === exportPath) return; // the dashboard's own polling is not traffic worth recording
+    // Unmatched requests (404 scans, tokens in paths) share one label so they cannot fill the store.
+    const matched = (req as unknown as { routeOptions?: { url?: string } }).routeOptions?.url;
+    if (matched === exportPath) return; // the dashboard's own polling is not traffic worth recording
+    const route = matched ?? UNMATCHED_ROUTE;
 
     // Fastify 5 exposes reply.elapsedTime; Fastify 4 has getResponseTime().
     const timing = reply as unknown as { elapsedTime?: number; getResponseTime?: () => number };
@@ -37,6 +41,7 @@ export function pulseFastify(app: FastifyInstance, instance: PulseInstance, opti
     const sinceTs = Number(query.since ?? 0);
     const result = await instance.exportHandler({
       authorizationHeader: req.headers.authorization,
+      clientId: req.ip,
       sinceTs: Number.isFinite(sinceTs) ? sinceTs : 0,
       limit: query.limit ? Number(query.limit) : undefined,
     });

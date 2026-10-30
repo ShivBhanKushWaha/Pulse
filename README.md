@@ -27,7 +27,9 @@ Nothing in the monitored project's DB credentials, connection string, or raw dat
 ## Security
 
 - **Dashboard API:** every `/api/*` call needs `Authorization: Bearer <PULSE_ADMIN_TOKEN>` (only `/health` is open). Compared in constant time; 20 failed attempts per client in 15 minutes returns 429. Production refuses to start without `PULSE_ADMIN_TOKEN` (24+ characters) and `PULSE_MASTER_KEY` (16+ characters). In development, if no token is set a temporary one is printed at startup. The UI shows a sign-in form and keeps the token in the browser's local storage.
-- **Export route:** `GET /_pulse/export` needs the project's `apiKey` as a Bearer token, compared in constant time.
+- **Export route:** `GET /_pulse/export` needs the project's `apiKey` as a Bearer token, compared in constant time. The SDK refuses keys shorter than 32 characters (use the key the dashboard gave you, or `crypto.randomBytes(32).toString('hex')`), and 20 failed attempts per client IP in 15 minutes returns 429 (behind a proxy, make sure `req.ip` is the real client, e.g. Express `trust proxy`).
+- **Routes:** requests that match no route are recorded under the fixed label `unmatched`, never with their raw path or query string.
+- **Dashboard export URLs:** in production (`NODE_ENV=production`) `exportUrl` must be `https://` and must not resolve to a loopback, private or link-local address. `PULSE_ALLOW_HTTP=1` allows http, `PULSE_ALLOWED_HOSTS=host1,10.0.0.5` exempts trusted hosts. Redirects are not followed.
 - Project API keys are encrypted at rest (AES-256-GCM, key from `PULSE_MASTER_KEY`).
 
 ## Delivery guarantees

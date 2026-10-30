@@ -1,6 +1,6 @@
 {
   "name": "@shiv-kush/pulse-monitor-plugin-fastify",
-  "version": "0.1.2",
+  "version": "0.2.0",
   "description": "Fastify integration for @shiv-kush/pulse-monitor-sdk: request timing hook + /_pulse/export route.",
   "license": "MIT",
   "main": "dist/index.js",
@@ -16,13 +16,13 @@
     "prepublishOnly": "pnpm run build"
   },
   "peerDependencies": {
-    "fastify": ">=4",
+    "fastify": ">=5.12.2",
     "@shiv-kush/pulse-monitor-sdk": "workspace:*"
   },
   "devDependencies": {
     "@shiv-kush/pulse-monitor-sdk": "workspace:*",
     "@types/node": "^22.10.0",
-    "fastify": "^4.28.1",
+    "fastify": "^5.12.7",
     "typescript": "^5.5.0"
   },
   "repository": {
