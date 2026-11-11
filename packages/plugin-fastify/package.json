@@ -1,8 +1,8 @@
 {
   "name": "@shiv-kush/pulse-monitor-plugin-fastify",
-  "version": "0.2.0",
+  "version": "0.2.1",
   "description": "Fastify integration for @shiv-kush/pulse-monitor-sdk: request timing hook + /_pulse/export route.",
-  "license": "MIT",
+  "license": "SEE LICENSE IN LICENSE",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
   "files": [

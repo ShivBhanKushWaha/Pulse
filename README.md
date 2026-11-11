@@ -75,4 +75,4 @@ Save the returned `apiKey` — it will not be shown again.
 
 ## License
 
-[MIT](LICENSE)
+Free to use, not to copy or modify. See [LICENSE](LICENSE).
